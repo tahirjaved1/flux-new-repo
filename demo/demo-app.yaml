@@ -9,7 +9,7 @@ spec:
   interval: 30s
   url: ssh://git@github.com/tahirjaved1/flux-new-repo
   ref:
-    branch: master
+    branch: main
   secretRef:
     name: ssh-credentials
 ---
@@ -36,7 +36,7 @@ spec:
   imageRepositoryRef:
     name: flux-demo-app
   filterTags:
-    pattern: "^master-[a-f0-9]+-(?P<ts>[0-9]+)"
+    pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)"
     extract: "$ts"
   policy:
     numerical:
@@ -64,7 +64,7 @@ spec:
   git:
     checkout:
       ref:
-        branch: master
+        branch: main
     commit:
       author:
         email: fluxcdbot@users.noreply.github.com
@@ -73,7 +73,7 @@ spec:
         Automated image updated by Flux
         [ci skip]
     push:
-      branch: master
+      branch: main
   update:
     path: ./kustomize
     strategy: Setters
