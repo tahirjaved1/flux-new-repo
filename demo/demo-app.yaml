@@ -1,9 +1,9 @@
-#File: gitops-demo-app.yaml
+#File: flux-new-repo.yaml
 
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
 metadata:
-  name: flux-demo-app
+  name: flux-new-repo
   namespace: flux-system
 spec:
   interval: 30s
@@ -16,13 +16,13 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
-  name: flux-demo-app
+  name: flux-new-repo
   namespace: flux-system
 spec:
   interval: 30s
   sourceRef:
     kind: GitRepository
-    name: flux-demo-app
+    name: flux-new-repo
   path: ./kustomize
   prune: true
   targetNamespace: default
@@ -34,46 +34,10 @@ metadata:
   namespace: flux-system
 spec:
   imageRepositoryRef:
-    name: flux-demo-app
+    name: flux-new-repo
   filterTags:
-    pattern: "^main-[a-f0-9]+-(?P<ts>[0-9]+)"
+    pattern: "^master-[a-f0-9]+-(?P<ts>[0-9]+)"
     extract: "$ts"
   policy:
     numerical:
       order: asc
----
-apiVersion: image.toolkit.fluxcd.io/v1beta1
-kind: ImageRepository
-metadata:
-  name: flux-demo-app
-  namespace: flux-system
-spec:
-  image: pythops/gitops
-  interval: 1m
----
-apiVersion: image.toolkit.fluxcd.io/v1beta1
-kind: ImageUpdateAutomation
-metadata:
-  name: flux-demo-app
-  namespace: flux-system
-spec:
-  interval: 1m
-  sourceRef:
-    kind: GitRepository
-    name: flux-demo-app
-  git:
-    checkout:
-      ref:
-        branch: main
-    commit:
-      author:
-        email: fluxcdbot@users.noreply.github.com
-        name: fluxcdbot
-      messageTemplate: |
-        Automated image updated by Flux
-        [ci skip]
-    push:
-      branch: main
-  update:
-    path: ./kustomize
-    strategy: Setters
